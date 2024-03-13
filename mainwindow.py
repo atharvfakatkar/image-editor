@@ -1,8 +1,6 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QToolBar, QStatusBar, QFileDialog, QComboBox, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QToolBar, QStatusBar, QFileDialog, QComboBox, QVBoxLayout, QWidget, QGridLayout
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon, QPixmap, QAction
-from PyQt5.QtMultimedia import *
-from PyQt5.QtMultimediaWidgets import *
 import os
 import sys
 import time
@@ -12,34 +10,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setFixedSize(QSize(600, 500))
 
         toolbar = QToolBar("My toolbar")
         toolbar.setIconSize(QSize(16,16))
         self.addToolBar(toolbar)
 
-        self.camera = QCamera()
-        self.viewfinder = QCameraViewfinder()
-        self.camera.setViewfinder(self.viewfinder)
-        self.camera.start()
-
-#        self.available_cameras = QCameraInfo.availableCameras()
-
- #       if not self.available_cameras:
-  #          sys.exit()
-
-        self.select_camera(0)
-
-        camera_selector = QComboBox()
-        camera_selector.setStatusTip("Choose camera to take pictures")
-        camera_selector.setToolTip("Select Camera")
-        camera_selector.setToolTipDuration(2500)
-
-        camera_selector.addItems([camera.description() for camera in self.available_cameras])
-        camera_selector.currentIndexChanged.connect(self.select_camera)
-        toolbar.addWidget(camera_selector)
-
         self.setWindowTitle("Image Editor")
+        self.setGeometry(100,100,1080,720)
 
         browse_action = QAction(QIcon("./Icons/blue-folder-horizontal-open"), "Browse image", self)
         browse_action.setStatusTip("Select image")
@@ -51,8 +28,14 @@ class MainWindow(QMainWindow):
         capture_action.triggered.connect(self.click_image)
         toolbar.addAction(capture_action)
 
+        central_widget = QWidget(self)
+        self.setCentralWidget(central_widget)
+
+        layout = QVBoxLayout()
+        central_widget.setLayout(layout)
+        
         self.image_label = QLabel()
-        self.setCentralWidget(self.viewfinder)
+        layout.addWidget(self.image_label)
 
         self.status = QStatusBar(self)
         self.setStatusBar(self.status)
